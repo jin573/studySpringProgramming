@@ -68,4 +68,21 @@ public class TodoController {
         ResponseDTO<TodoDTO> responseDTO = ResponseDTO.<TodoDTO>builder().data(todoDTOS).build(); //dto를 responseDTO로
         return  ResponseEntity.ok().body(responseDTO);
     }
+
+    @PutMapping
+    public ResponseEntity<?> updateTodo(@RequestBody TodoDTO todoDTO){
+        String temporaryUserId = "temporary - user"; //temporaryUserId 임시 아이디
+
+        TodoEntity todoEntity = TodoDTO.toEntity(todoDTO);
+
+        //id를 임시 아이디로 초기화 한다 (?)
+        todoEntity.setUserId(temporaryUserId);
+        //리스트 업데이트
+        List<TodoEntity> todoEntities = todoService.update(todoEntity);
+        //entity -> dto
+        List<TodoDTO> todoDTOS = todoEntities.stream().map(TodoDTO::new).collect(Collectors.toList());
+        //dto -> responseDTO
+        ResponseDTO<TodoDTO> responseDTO = ResponseDTO.<TodoDTO>builder().data(todoDTOS).build();
+        return ResponseEntity.ok().body(responseDTO);
+    }
 }
