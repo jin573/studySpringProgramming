@@ -16,9 +16,18 @@ public class TodoDTO {
     private String title;
     private boolean done;
 
-    public TodoDTO(final TodoEntity entity){
+    public TodoDTO(final TodoEntity entity) {
         this.id = entity.getId();
         this.title = entity.getTitle();
         this.done = entity.isDone();
+    }
+
+    //todoDTO를 todoEntity로 바꾸기
+    public static TodoEntity toEntity(final TodoDTO todoDTO){
+        return TodoEntity.builder()
+                .id(todoDTO.getId())
+                .title(todoDTO.getTitle())
+                .done(todoDTO.isDone())
+                .build();
     }
 }
