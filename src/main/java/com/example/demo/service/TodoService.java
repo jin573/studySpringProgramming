@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -50,5 +51,24 @@ public class TodoService {
 
     public List<TodoEntity> retrieve(final String userId){
         return repository.findByUserId(userId);
+    }
+
+    public List<TodoEntity> update(final TodoEntity todoEntity){
+        //저장할 entity가 유효한지 구현
+        validate(todoEntity);
+
+        //해당하는 entity를 가져온다
+        final Optional<TodoEntity> optionalTodoEntity = repository.findById(todoEntity.getId());
+
+        optionalTodoEntity.ifPresent(todo ->{
+            //entity를 수정
+            todo.setTitle(todoEntity.getTitle());
+            todo.setDone(todoEntity.isDone());
+            //저장
+            repository.save(todo);
+        });
+
+        //유저의 모든 todo list를 리턴
+        return  retrieve(todoEntity.getUserId());
     }
 }
