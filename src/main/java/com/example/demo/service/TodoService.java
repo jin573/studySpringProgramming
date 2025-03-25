@@ -26,6 +26,17 @@ public class TodoService {
     }
 
     public List<TodoEntity> create(final TodoEntity todoEntity){
+        //validations
+        validate(todoEntity);
+
+        repository.save(todoEntity);
+
+        log.info("Entity Id: {} is saved", todoEntity.getId());
+
+        return repository.findByUserId(todoEntity.getUserId());
+    }
+
+    private void validate(TodoEntity todoEntity){
         if (todoEntity == null){
             log.warn("Entity cannot be null");
             throw new RuntimeException();
@@ -35,11 +46,5 @@ public class TodoService {
             log.warn("Unknown user.");
             throw new RuntimeException("Unknown user.");
         }
-
-        repository.save(todoEntity);
-
-        log.info("Entity Id: {} is saved", todoEntity.getId());
-
-        return repository.findByUserId(todoEntity.getUserId());
     }
 }
