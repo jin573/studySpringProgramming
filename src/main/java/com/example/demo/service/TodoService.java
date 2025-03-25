@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class TodoService {
@@ -21,5 +23,23 @@ public class TodoService {
         //TodoEntity 검색
         TodoEntity savedEntity = repository.findById(todoEntity.getId()).get();
         return savedEntity.getTitle();
+    }
+
+    public List<TodoEntity> create(final TodoEntity todoEntity){
+        if (todoEntity == null){
+            log.warn("Entity cannot be null");
+            throw new RuntimeException();
+        }
+
+        if (todoEntity.getUserId() == null){
+            log.warn("Unknown user.");
+            throw new RuntimeException("Unknown user.");
+        }
+
+        repository.save(todoEntity);
+
+        log.info("Entity Id: {} is saved", todoEntity.getId());
+
+        return repository.findByUserId(todoEntity.getUserId());
     }
 }
