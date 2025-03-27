@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import ch.qos.logback.core.encoder.EchoEncoder;
 import com.example.demo.dto.ResponseDTO;
 import com.example.demo.dto.TodoDTO;
 import com.example.demo.model.TodoEntity;
@@ -75,7 +76,7 @@ public class TodoController {
 
         TodoEntity todoEntity = TodoDTO.toEntity(todoDTO);
 
-        //id를 임시 아이디로 초기화 한다 (?)
+        //id를 임시 아이디로 초기화 한다 (?) -> 나중에 수정. 현재는 임시 아이디 가져와야 하므로 setUserId 작성
         todoEntity.setUserId(temporaryUserId);
         //리스트 업데이트
         List<TodoEntity> todoEntities = todoService.update(todoEntity);
@@ -84,5 +85,26 @@ public class TodoController {
         //dto -> responseDTO
         ResponseDTO<TodoDTO> responseDTO = ResponseDTO.<TodoDTO>builder().data(todoDTOS).build();
         return ResponseEntity.ok().body(responseDTO);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteTodo(@RequestBody TodoDTO todoDTO){
+        try{
+            String temporaryUserId = "temporary - user"; //temporaryUserId 임시 아이디
+
+            TodoEntity todoEntity = TodoDTO.toEntity(todoDTO);
+            todoEntity.setUserId(temporaryUserId);
+
+            List<TodoEntity> todoEntities = todoService.delete(todoEntity);
+
+            List<TodoDTO>todoDTOS = todoEntities.stream().map(TodoDTO::new).collect(Collectors.toList());
+
+            ResponseDTO<TodoDTO> responseDTO = ResponseDTO.<TodoDTO>builder().data(todoDTOS).build();
+            return ResponseEntity.ok().body(responseDTO);
+        }catch (Exception e){
+            String error = e.getMessage();
+            ResponseDTO<TodoDTO> responseDTO = ResponseDTO.<TodoDTO>builder().error(error).build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
     }
 }
