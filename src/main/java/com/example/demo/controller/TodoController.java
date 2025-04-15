@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import ch.qos.logback.core.encoder.EchoEncoder;
 import com.example.demo.dto.ResponseDTO;
 import com.example.demo.dto.TodoDTO;
 import com.example.demo.model.TodoEntity;
