@@ -1,6 +1,7 @@
 package com.example.demo.security;
 
 import com.example.demo.model.UserEntity;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,15 @@ public class TokenProvider {
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .compact();
+    }
+
+    public String validateAndGetUserId(String token){
+        Claims claims = Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getSubject();
     }
 
 }
