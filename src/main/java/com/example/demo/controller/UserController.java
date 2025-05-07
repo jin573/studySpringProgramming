@@ -36,14 +36,13 @@ public class UserController {
             }
             UserEntity user = UserEntity.builder()
                     .username(userDTO.getUsername())
-                    .password(userDTO.getPassword()) //패스워드가 암호화되어 저장
+                    .password(passwordEncoder.encode(userDTO.getPassword())) //패스워드가 암호화되어 저장
                     .build();
 
             UserEntity registeredUser = userService.create(user);
             UserDTO responseUserDTO = UserDTO.builder()
                     .id(registeredUser.getId())
                     .username(registeredUser.getUsername())
-                    .password(registeredUser.getPassword())
                     .build();
 
             return  ResponseEntity.ok().body(responseUserDTO);
@@ -62,12 +61,15 @@ public class UserController {
                 passwordEncoder
         );
 
+        System.out.println(userDTO.getPassword());
+        System.out.println(passwordEncoder.encode("test1234"));
+
+
         if(user != null){
             final String token = tokenProvider.create(user);
             final UserDTO responseUserDTO = UserDTO.builder()
                     .username(user.getUsername())
                     .id(user.getId())
-                    .password(user.getPassword())
                     .token(token)
                     .build();
             return ResponseEntity.ok().body(responseUserDTO);
